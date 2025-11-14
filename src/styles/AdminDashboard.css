@@ -1,0 +1,36 @@
+.table-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: auto; /* Adjust height as needed */
+  min-height: 400px; /* Ensure consistent height */
+  position: relative; /* Required for sticky positioning */
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+  background-color: #f8f9fa; /* Optional background for clarity */
+}
+
+.sticky-pagination {
+  position: sticky;
+  bottom: 0; /* Stick to the bottom of the container */
+  z-index: 10; /* Ensure it stays above other elements */
+}
+
+.fixed-pagination {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+  background-color: #f8f9fa; /* Optional background for clarity */
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow for better visibility */
+  z-index: 10; /* Ensure it stays above other elements */
+}

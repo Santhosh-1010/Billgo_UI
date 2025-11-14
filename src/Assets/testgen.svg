@@ -1,0 +1,9 @@
+<svg width="84" height="84" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <!-- Rounded chat bubble -->
+  <path d="M16 16h32c4.4 0 8 3.6 8 8v20c0 4.4-3.6 8-8 8H28l-8 6v-6h-4c-4.4 0-8-3.6-8-8V24c0-4.4 3.6-8 8-8z"
+        stroke="#fff" stroke-width="5" fill="none" stroke-linejoin="round"/>
+  
+  <!-- Message lines (instead of dots) -->
+  <line x1="22" y1="30" x2="42" y2="30" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+  <line x1="22" y1="36" x2="34" y2="36" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+</svg>

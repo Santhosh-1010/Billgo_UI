@@ -1,0 +1,154 @@
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "../styles/Login.css";
+import { useDispatch} from "react-redux";
+import { userLogin } from "../actions/LoginActions";
+import Swal from "sweetalert2";
+import { sweetalert } from "../utils/constatnts";
+import Neo from '../Assets/neoAI.png'
+const LoginPage = () => {
+  const [formData, setFormData] = useState({ username: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
+  const [isDisabled, setIsDisavled] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  let dispatch = useDispatch()
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+  const FullScreenLoader = () => (
+    <div className="loader-overlay">
+      <div className="spinner-border text-white" role="status">
+      </div>
+    </div>
+  );
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+  const handleForgot = () => {
+    Swal.fire({
+      text: 'Please Contact Admin',
+      confirmButtonText: 'ok'
+    });
+  }
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/;
+  if (!emailPattern.test(formData.username)) {
+    Swal.fire({
+      title: sweetalert.ERROR_CONFIRMED_TEXT,
+      text: "Please enter a valid email address.",
+      icon: sweetalert.ERROR_ICON,
+      confirmButtonText: sweetalert.ERROR_CONFIRMED_TEXT,
+    });
+    return;
+  }
+
+  setLoading(true);
+  setIsDisavled(true);
+  
+  // For static authentication, we don't need to encrypt the password
+  const Payload = new FormData();
+  Payload.append('username', formData.username);
+  Payload.append('password', formData.password);
+
+  dispatch(userLogin(Payload)).then(async (response) => {
+    setLoading(false);
+    setIsDisavled(false);
+
+    if (response?.status === 200) {
+      const data = response;
+      sessionStorage.setItem("access_token", data.data.access_token);
+      sessionStorage.setItem("user_id", data?.data?.id);
+      sessionStorage.setItem("role", data?.data?.role);
+      sessionStorage.setItem("name", data?.data?.full_name);
+      navigate("/chat");
+    } else {
+      Swal.fire({
+        title: sweetalert.ERROR_CONFIRMED_TEXT,
+        text: response,
+        icon: sweetalert.ERROR_ICON,
+        confirmButtonText: 'Okay',
+      });
+    }
+  });
+};
+
+  const handleRegister = () => {
+    navigate("/register");
+  };
+
+  return (
+    
+    <div className="login-container">
+       {loading && <FullScreenLoader />}
+      <form className="login-form" onSubmit={handleSubmit}>
+      <img
+            src={Neo}
+            alt="Bilvantis Logo"
+            style={{ height: "30px", width:'35px' }}
+          /><div style={{fontSize:'5px'}}>Engineering with AI</div>
+        <h4>Login</h4>
+        <div style={{ fontSize: '12px', color: '#666', marginBottom: '10px', padding: '8px', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
+          <strong>Demo Credentials:</strong><br/>
+          Admin: admin@sample.com / admin123<br/>
+          User: user@sample.com / user123<br/>
+          Test: test@sample.com / test123
+        </div>
+        <label>Email:</label>
+        <input
+          type="email"
+          name="username"
+          value={formData.username}
+          onChange={handleInputChange}
+          pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$"
+          required
+        />
+        <label>Password:</label>
+        <div className="password-wrapper">
+          <input
+            type={showPassword ? "text" : "password"}
+            name="password"
+            value={formData.password}
+            onChange={handleInputChange}
+            required
+          />
+          <button
+            type="button"
+            className="toggle-password"
+            onClick={togglePasswordVisibility}
+          >
+            {showPassword ?
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 2L22 22" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M6.71277 6.7226C3.66479 8.79527 2 12 2 12C2 12 5.63636 19 12 19C14.0503 19 15.8174 18.2734 17.2711 17.2884M11 5.05822C11.3254 5.02013 11.6588 5 12 5C18.3636 5 22 12 22 12C22 12 21.3082 13.3317 20 14.8335" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M14 14.2362C13.4692 14.7112 12.7684 15.0001 12 15.0001C10.3431 15.0001 9 13.657 9 12.0001C9 11.1764 9.33193 10.4303 9.86932 9.88818" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              :
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M1 12C1 12 5 20 12 20C19 20 23 12 23 12" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <circle cx="12" cy="12" r="3" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            }
+          </button>
+        </div>
+        <div className="row flex ">
+          <button type="submit" className="login-button" disabled={isDisabled}>
+            Login
+          </button>
+        </div>
+        <p className="register-redirect">
+          Don't have an account?
+          <span className="register-link" onClick={handleRegister}>Register</span>
+        </p>
+        <p className="register-redirect">
+          Forgot Password ?
+          <span className="register-link" onClick={handleForgot}>Click</span>
+        </p>
+      </form>
+    </div>
+  );
+};
+export default LoginPage;
